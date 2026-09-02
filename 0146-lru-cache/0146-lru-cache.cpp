@@ -1,9 +1,9 @@
 class LRUCache {
 public:
     // make the list variable and also he n -> repressnring the capacity
-    list<int> nums{};
+    list<pair<int,int>> nums{}; // nums stores key value pairs
     int n;
-    unordered_map<int , int> pairs;
+    unordered_map<int , list<pair<int, int>>::iterator> pairs; // pairs will store key and memory addresses for the key value 
 
     LRUCache(int capacity):n(capacity) {
         
@@ -11,36 +11,41 @@ public:
     
     int get(int key) {
         // check if this key exists with .count 
-        auto it = find(nums.begin() , nums.end() , key);
-        if (it != nums.end()){
-            nums.splice(nums.begin() , nums , it);
-            return pairs[key];
+
+        if (pairs.count(key) == 0){
+            return -1 ;
         }
-        else{
-            return -1;
-        }
+        
+        auto node = pairs[key]; // this represents the key and value 
+
+        nums.splice(nums.begin() , nums , node);
+
+        int value = node->second;
+
+        return value; // this will be the value 
         
     }
     
     void put(int key, int value) {
         
         // check if the value exist 
-        auto it = find(nums.begin() , nums.end() , key);
-        if (it != nums.end()){
-            nums.splice(nums.begin(), nums, it);
-            pairs[key] = value;
+        
+        if (pairs.count(key)){
+            auto node = pairs[key];
+            node->second = value;
+            nums.splice(nums.begin(), nums, node);
         }
         else{
             if (nums.size() < n){
-                nums.push_front(key);
-                pairs[key] = value;
+                nums.push_front({key , value});
+                pairs[key] = nums.begin();
             }
             else{
-                int l = nums.back();
-                pairs.erase(l); // get rid of the least recently used key pair 
+                auto l = nums.back();
+                pairs.erase(l.first); // get rid of the least recently used key pair 
                 nums.pop_back(); // remove the least recently used 
-                nums.push_front(key); // add the new one 
-                pairs[key] = value;
+                nums.push_front({key, value}); // add the new one 
+                pairs[key] = nums.begin();
             }
         }
         
