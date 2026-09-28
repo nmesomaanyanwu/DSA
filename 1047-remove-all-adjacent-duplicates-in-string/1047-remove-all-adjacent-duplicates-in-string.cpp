@@ -9,13 +9,18 @@ public:
 
         for (auto ch : s){
 
-            if (st.empty() || !st.empty() && st.back() != ch) st.push_back(ch);
-            else{
-                while (!st.empty() && st.back() == ch){
-                st.pop_back();
-                }
+            if (st.empty()) {
+                st.push_back(ch);
+                continue;
             }
             
+            if  (!st.empty() && st.back() == ch){
+                st.pop_back();
+                continue;
+                
+            }
+            
+            st.push_back(ch);
         }
 
 
