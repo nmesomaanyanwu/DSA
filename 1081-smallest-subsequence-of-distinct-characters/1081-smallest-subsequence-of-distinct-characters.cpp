@@ -18,7 +18,7 @@ public:
         for (int i = 0 ; i < s.size() ; i++){
 
             // get the current char 
-            int cur = s[i];
+            char cur = s[i];
 
             if (unique.count(cur) == 0 ){
                 // we check if theres a stack and if the top of the stack is greater and it shows up later
