@@ -29,14 +29,13 @@ public:
                 q.pop();
 
                 // ok so now it like
-                if (c == nullptr) continue;
 
                 cur.push_back(c->val);
 
-                q.push(c->left);
-                q.push(c->right);
+                if (c->left != nullptr) q.push(c->left);
+                if (c->right != nullptr) q.push(c->right);
             }
-            if (cur.empty()) continue;
+            
             ans.push_back(cur);
         }
 
