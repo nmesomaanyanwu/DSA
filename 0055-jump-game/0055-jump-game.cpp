@@ -9,38 +9,19 @@ public:
         4) if the top of the dp still ends up being -1 from when we intialized it then we return false else true  
         */
 
-        vector<int> dp(nums.size() , -1);
-      
         int n =nums.size();
         int end = n-1; // end index
-        dp[end] = 0;
+        int goal = end;
 
-        for (int i = n - 2 ; i >= 0 ; --i){
-            int cur = nums[i];
-            // check if  cur is greater than or equal to diff between difference between indexes
-            if (cur >= (end - i)){
-                dp[i] = 1;
+
+        for (int i = goal - 1 ; i >= 0 ; --i){
+
+            if (nums[i] >= (goal - i) ){
+                goal = i;
             }
-            else{
-                int id = i + 1;
-                while (id <= end){
-                    if (dp[id] != -1){
-                        break;
-                    }
-                    ++id;   
-                } 
-
-                if (dp[id] != -1 && (cur >= (id - i))){
-                    dp[i] = (id -i) + dp[i];
-                } 
-
-            }
-            
         }
 
-
-        if (dp[0] == -1) return false;
-        else return true;
         
+        return goal == 0;
     }
 };
