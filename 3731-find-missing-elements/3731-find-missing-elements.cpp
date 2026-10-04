@@ -2,21 +2,22 @@ class Solution {
 public:
     vector<int> findMissingElements(vector<int>& nums) {
         vector<int> ans;
-        sort(nums.begin() , nums.end());
-        int n = nums.size();
-        int last = nums[n-1];
-        int start = nums[0];
+        
+        priority_queue<int, vector<int>, greater<>> hp(nums.begin(), nums.end());
 
-        unordered_set<int> d(nums.begin() , nums.end());
-
-        for (int i = start + 1 ; i < last ; i++){
-            if (d.count(i) == 0){
-                ans.push_back(i);
+        int start = hp.top() + 1;
+        hp.pop(); 
+    
+        while (!hp.empty()){
+            if (start != hp.top()){
+                ans.push_back(start);
             }
+            else{
+                hp.pop();
+            }
+            start++;
         }
 
-        return ans;
-    
-         
+         return ans;
     }
 };
