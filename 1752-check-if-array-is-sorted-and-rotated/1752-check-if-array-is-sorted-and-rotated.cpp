@@ -4,21 +4,29 @@ public:
 
         int n = nums.size();
 
-        vector<int> sorted = nums;
-        sort(sorted.begin() , sorted.end());
+        if ( n == 1)return true;
 
-        int i = 0;
-        while (i < n){
+        int count = 1;
+        int l = 0;
 
-            if (nums == sorted) return true;
+        for (int i = 1 ; i < (2*n) ; i++){
 
-            int val = nums.front();
-            nums.push_back(val);
-            nums.erase(nums.begin());
-            i++;
+            if (nums[i % n] >= nums[(i-1) % n]){
+                count++;
+            }
+            else if (nums[i % n] < nums[(i -1) % n]){
+                count = 1;
+            }
+
+            if (count == n){
+                return true ;
+            }
+            
         }
 
-        return nums == sorted;
+
+        return  count == n;
+       
         
 
 
