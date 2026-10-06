@@ -1,51 +1,87 @@
 class Solution {
 public:
     int numIslands(vector<vector<char>>& grid) {
-        /*
-        ill do all the 4 ways i can do this question firstly recursion , bfs , stack and then union find 
-        */
-        int rows = grid.size();
-        int cols = grid[0].size();
-        int max_count = 0;
+        if (grid.empty() || grid[0].empty()) return 0;
+        
+        class DSU{
+            public:
+            vector<int> parent;
+            vector<int> size;
+            int components = 0;
 
-        vector<pair<int , int>> moves = {{1,0}, {0, 1}, {-1,0}, {0 ,-1}}; 
-        vector<vector<int>> visited(rows , vector<int>(cols , 0));
+            DSU(int n):size(n, 0), parent(n){
 
-        auto dfs = [&] (auto&& self , int row , int col) -> int{
-
-            if (visited[row][col] == 1) return 0;
-
-            if (grid[row][col] == '0') return 0;
-
-            visited[row][col] = 1;
-
-            for (auto [v , h] : moves){
-                int nr = v + row;
-                int nc = h + col;
-
-                if (nr < 0 || nr >= rows || nc < 0 || nc >= cols ) continue; 
-
-                self(self , nr , nc);
-
+                for (int i = 0; i < n ; i++){
+                    parent[i]= i;
+                }
             }
 
+            int find(int x){
+                
+                if (parent[x] != x){
+                    parent[x] = find(parent[x]);
+                }
 
-            return 1;
+                return parent[x];
+            }
+
+            bool unite(int a , int b){
+                int ra = find(a);
+                int rb = find(b);
+
+                if (ra == rb) return false;
+
+                if (size[ra] < size[rb]){
+                    swap(ra , rb);
+                }
+
+                parent[rb] = ra;
+                size[ra]+= size[rb];
+
+                components--;
+                return true;
+            }
 
         };
 
+        // intialize the class and then get the amount of components and then match 
+        int rows = grid.size();
+        int cols = grid[0].size();
 
-        
+        vector<pair<int, int>> moves = {{1,0}, {-1, 0}, {0, 1}, {0,-1}};
 
-        for (int r = 0 ; r < rows ; ++r){
-            for (int c = 0 ; c < cols ; ++c){
-                // so then we check in the grid for a char 
-                if (grid[r][c] == '1')
-                    max_count += dfs(dfs , r , c);
+        DSU dsu(rows*cols);
+
+        for (int i = 0 ; i < rows ; i++){
+            for (int j = 0 ; j < cols ; j++){
+
+                if (grid[i][j] == '1'){
+                    dsu.components++;
+                }
             }
         }
 
-        return max_count;
-        
+        for (int i = 0 ; i < rows ; i++){
+            for (int j = 0 ; j < cols ; j++){
+
+                if (grid[i][j] == '1'){
+
+                    for (auto [r , v]: moves){
+                        int nr = r+ i;
+                        int nc = v + j;
+
+                        if (nr <0 || nr >=rows || nc <0 || nc >= cols)continue;
+
+                       
+                        if (grid[nr][nc] == '0') continue;
+
+                        dsu.unite(i * cols + j , nr * cols + nc);
+                    }
+                }
+            }
+        }
+
+        return dsu.components;
+
     }
 };
