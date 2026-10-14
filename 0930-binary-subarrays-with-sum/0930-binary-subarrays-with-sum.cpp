@@ -2,33 +2,28 @@ class Solution {
 public:
     int numSubarraysWithSum(vector<int>& nums, int goal) {
         /*Literaly the same as the previous example we can sliding window , prefix sum etc */
-        int n = nums.size();
-        unordered_map<int , int> seen;
-        seen.insert({0 , 1});
-        vector<int> prefix(n);
+        
+        auto helper = [&](auto&& self , int x) -> int{
+            if (x == -1) return 0;
+            int l = 0;
+            int cur = 0;
+            int res = 0;
 
-        for (int i = 0 ; i < n ; i++){
-            if (i == 0){
-                prefix[i] = nums[i];
+            for (int r = 0 ; r < nums.size() ; r++){
+                cur += nums[r];
+
+                while(cur > x){
+                    cur -= nums[l];
+                    l++;
+                }
+
+                res += (r - l) + 1;
             }
-            else{
-                prefix[i] = nums[i] + prefix[i - 1];
-            }
-        }
-        int count = 0;
+            return res;
+        };
 
-        for (int i = 0 ; i < prefix.size(); i++){
-            int diff = prefix[i] - goal;
 
-            if (seen.count(diff)){
-                count += seen[diff];
-            }
-            
-            seen[prefix[i]]++;
-        }
-
-        return count;
-
+        return helper(helper, goal) - helper(helper , goal - 1);
 
     }
 };
