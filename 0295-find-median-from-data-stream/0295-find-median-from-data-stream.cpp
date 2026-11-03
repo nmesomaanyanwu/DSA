@@ -1,46 +1,42 @@
 class MedianFinder {
-    priority_queue<int , vector<int>, greater<>> minHeap; // this will contain the higher half of our median stream
-    priority_queue<int> maxHeap;//this will contain the lower half 
+    priority_queue<int> smaller; // this is a max heap
+    priority_queue<int, vector<int>, greater<>> larger; // this is a min heap 
 public:
     MedianFinder() {
         
     }
     
     void addNum(int num) {
-        if (!maxHeap.empty() && num > maxHeap.top()) {
-        minHeap.push(num);
-    }
-    else {
-        maxHeap.push(num);
-    }
-        
-       
-        if (maxHeap.size() > minHeap.size() + 1) {
-            minHeap.push(maxHeap.top());
-            maxHeap.pop();
+        if (smaller.empty() || num < smaller.top()){
+            smaller.push(num);
         }
-        else if (minHeap.size() > maxHeap.size() + 1) {
-            maxHeap.push(minHeap.top());
-            minHeap.pop();
+        else{
+            larger.push(num);
+        }
+
+        if (smaller.size() > larger.size() + 1){
+            larger.push(smaller.top());
+            smaller.pop();
+        }
+        else if (larger.size() > smaller.size()){
+            smaller.push(larger.top());
+            larger.pop();
+
         }
         
     }
     
     double findMedian() {
-        if (maxHeap.size() > minHeap.size() && maxHeap.size() == minHeap.size() + 1){
-            return maxHeap.top();
-        }
-        else if (maxHeap.size() < minHeap.size() && maxHeap.size() + 1 == minHeap.size()){
-            return minHeap.top();
-        }
-        else if (maxHeap.size() == minHeap.size()){
-            int a = maxHeap.top();
-            int b = minHeap.top();
+        // we check for if they are not the same length 
 
-            return (a + b)/2.0;
+        if (smaller.size() > larger.size()){
+            return smaller.top();
         }
         else{
-            return 0;
+            int val = smaller.top() + larger.top();
+            double res = val / 2.0 ;
+
+            return res;
         }
         
     }
