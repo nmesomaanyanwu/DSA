@@ -1,52 +1,53 @@
 class LRUCache {
+    list<pair<int,int>> buff;
+    unordered_map<int , list<pair<int , int>>::iterator> hm;
+    int cap;
 public:
-    // make the list variable and also he n -> repressnring the capacity
-    list<pair<int,int>> nums{}; // nums stores key value pairs
-    int n;
-    unordered_map<int , list<pair<int, int>>::iterator> pairs; // pairs will store key and memory addresses for the key value 
-
-    LRUCache(int capacity):n(capacity) {
-        
+    LRUCache(int capacity) {
+        cap = capacity;
     }
     
     int get(int key) {
-        // check if this key exists with .count 
+        if (hm.count(key) == 1){
+            auto it = hm[key];
+            int value = it->second;
+            buff.erase(it);
+            buff.push_back({key , value});
 
-        if (pairs.count(key) == 0){
-            return -1 ;
+            hm[key] = prev(buff.end());
+
+            return value;
+
         }
-        
-        auto node = pairs[key]; // this represents the key and value 
 
-        nums.splice(nums.begin() , nums , node);
-
-        int value = node->second;
-
-        return value; // this will be the value 
-        
+      return -1;
     }
     
     void put(int key, int value) {
-        
-        // check if the value exist 
-        
-        if (pairs.count(key)){
-            auto node = pairs[key];
-            node->second = value;
-            nums.splice(nums.begin(), nums, node);
+
+        if (hm.count(key) == 1){
+            auto it = hm[key];
+            buff.erase(it);
+
+            buff.push_back({key , value});
+
+
+            hm[key] = prev(buff.end());
+
         }
         else{
-            if (nums.size() < n){
-                nums.push_front({key , value});
-                pairs[key] = nums.begin();
+            if (buff.size() == cap){
+                auto cur = buff.front().first;
+
+                buff.erase(buff.begin());
+
+                hm.erase(cur);
             }
-            else{
-                auto l = nums.back();
-                pairs.erase(l.first); // get rid of the least recently used key pair 
-                nums.pop_back(); // remove the least recently used 
-                nums.push_front({key, value}); // add the new one 
-                pairs[key] = nums.begin();
-            }
+
+            buff.push_back({key , value});
+            auto it = prev(buff.end());
+
+            hm[key] = it;
         }
         
     }
